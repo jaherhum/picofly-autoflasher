@@ -2,7 +2,7 @@
 
 ![Platform](https://img.shields.io/badge/platform-Windows-blue)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python)
-![License](https://img.shields.io/badge/license-CC--BY--NC--SA%204.0-lightgrey)
+![License](https://img.shields.io/badge/license-AGPLv3-blue)
 ![Requirements](https://img.shields.io/badge/dependencies-pip--requirements-blue)
 
 A Python script to automatically detect and flash PicoFly firmware to RP2040 devices (such as PicoFly).  
