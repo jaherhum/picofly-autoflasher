@@ -4,15 +4,15 @@ This script will auto-flash the latest PicoFly firmware on your RP2040.
 import os
 import urllib.request
 import sys
-import time
 import shutil
+import platform
 import requests
 import psutil
 
 os.system('title PicoFly AutoFlasher')
 
 
-def download():
+def download() -> str:
     """Downloads the latest firmware from rehius' GitHub Repo."""
 
     response = requests.get('https://api.github.com/repos/rehius/usk/releases/latest', timeout=30)
@@ -47,7 +47,7 @@ print(r"""
 
 FIRM_NAME = download()
 
-def get_drives():
+def get_drives() -> set:
     """Gets a list containing all drives connected when executed."""
 
     drives = []
@@ -56,25 +56,69 @@ def get_drives():
             drives.append(partition.device)
     return set(drives)
 
+def check_os() -> str:
+    '''Checks your current OS (LINUX/WINDOWS).'''
+    system = platform.system()
+    if system not in ['Linux', 'Windows']:
+        print(f'Your OS ({system}) is not compatible with this script.\nPress any key to exit.')
+        os.system('pause')
+        sys.exit()
+    return system
+
+
+
 def flash():
     """Flash the firmware."""
+    system = check_os()
     while True:
-        input('Disconnect (if connected) your RP2040 and press Enter...')
-        drives_before = get_drives()
-        print("\nPress the BOOT button in your RP2040 and connect it while pressing...")
 
-        while True:
-            time.sleep(1)
+        if system == 'Linux':
+            import subprocess
+            import glob
+
+            print('Connect your RP2040s pressing the BOOT button...')
+            input("Then, press Enter...\n")
+
+            rpico = glob.glob('/dev/disk/by-label/RPI-RP2*')
+            for device in rpico:
+                # Mounts with: udisksctl mount -b /dev/disk/by-label/RPI-RP2...
+                result = subprocess.run(
+                    ["udisksctl", "mount", "-b", device],
+                    capture_output=True,
+                    text=True,
+                    check=True
+                )
+
+                # "Mounted /dev/sdb1 at /run/media/(user)/RPI-RP2.\n"
+                output = result.stdout.strip()
+                # Get mount path only
+                mount_point = output.split(" at ")[1].rstrip(".")
+                print("Mounted:", mount_point)
+                # Copy firmware
+                shutil.copyfile(
+                    os.path.join(os.getcwd(), FIRM_NAME),
+                    os.path.join(mount_point, "firmware.uf2")
+                )
+
+
+
+        elif system == 'Windows': # In case of adding support for MacOS (probably not)
+
+            input('Disconnect (if connected) your RP2040s and press Enter...')
+            drives_before = get_drives()
+            input("Connect them pressing the BOOT button, and press Enter when finished...\n")
+
+
             drives_after = get_drives()
-            rpico = drives_after - drives_before
-            if rpico:
-                break
+            rpicos = drives_after - drives_before
 
-        drive = ''.join(rpico)  # Transform from set to str.
-        shutil.copyfile(f"{os.getcwd()}\\{FIRM_NAME}", f'{drive}\\firmware.uf2')
+            for rpico in rpicos:
+                drive = ''.join(rpico)  # Transform from set to str.
+                shutil.copyfile(
+                    os.path.join(os.getcwd(), FIRM_NAME),
+                    os.path.join(drive, "firmware.uf2"))
 
-        again = input("\nDone! Do you want to flash another RP2040? Y/N\n>> ")
-        if again.upper() == "N":
-            sys.exit()
+        input("\nDone! Press Enter to exit. ")
+        sys.exit()
 
 flash()
