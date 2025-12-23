@@ -1,13 +1,11 @@
 # PicoFly Autoflasher
 
-![Platform](https://img.shields.io/badge/platform-Windows-blue)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python)
 ![License](https://img.shields.io/badge/license-AGPLv3-blue)
 ![Requirements](https://img.shields.io/badge/dependencies-pip--requirements-blue)
 
 A Python script to automatically detect and flash PicoFly firmware to RP2040 devices (such as PicoFly).  
-
-> ⚠️ **This script must be run on Windows. Other platforms are not supported.**
 
 ---
 
@@ -17,7 +15,7 @@ A Python script to automatically detect and flash PicoFly firmware to RP2040 dev
 - Downloads the latest PicoFly firmware.
 - Flashes firmware with minimal user interaction.
 - Fast and user-friendly, ideal for quick setups.
-- ✅ Precompiled `.exe` available — no need for Python or setup.
+- ✅ Precompiled `.exe` available for Windows — no need for Python or setup.
 
 ---
 
@@ -39,15 +37,16 @@ A Python script to automatically detect and flash PicoFly firmware to RP2040 dev
 
 ## 🧩 Usage (Python Script)
 
-1. Connect your RP2040 device in **BOOTSEL/BOOT** mode by holding the BOOT button while plugging in the USB cable.
-2. Run the script:
+1. Run the script:
 
    ```bash
    python main.py
    ```
 
+2. Follow the on-screen instructions.
+
 3. The script will automatically:
-   - Detect your device.
+   - Detect your devices.
    - Download the latest firmware.
    - Flash it to the connected RP2040.
 
